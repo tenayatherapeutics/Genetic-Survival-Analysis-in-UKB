@@ -14,6 +14,9 @@ library(cobalt)
 set.seed(1)
 raw_master_pheno <- fread('example_pheno_with_AF_rehospitalization.txt') 
 
+# Function to plot survival for either time from first diag date of disease to CV outcome or rehospitalization
+# If using this script as a template make sure to load CV outcome file so that CV operations can be factored in outcome
+
 plotsurv <- function(rsnum, gene_name, pheno_df, phenotype, endpoint, cut_time, ylim, adj=FALSE) {
   
   death_dates <- fread('example_CV_outcome') %>%
@@ -104,6 +107,8 @@ plotsurv <- function(rsnum, gene_name, pheno_df, phenotype, endpoint, cut_time, 
 
 #### Create Matchit Function ----
 
+# Matching function, edit the basic inclusions if these traits are not the ones you want to match on 
+
 matchit_all <- function(subset_df, list_of_conditions, phenotype, SNP, omit_cols) { 
   #Basic Variable settings
   basic <- c('IID', 'sex', 'CV_outcome', 'CReactive_protein', 'smoking0', 
@@ -155,13 +160,16 @@ matchit_all <- function(subset_df, list_of_conditions, phenotype, SNP, omit_cols
 
 #### Example Dosage Input ----
 
+# Load in dosage, round so that we can match on genotype 
+
 example_dosage <- fread('example_dosage.txt') %>%
   mutate_if(is.numeric, round)
 
+# Define gene name and rs number so that the dosage dataframe can include multiple rsnums 
 gn <- 'Example'
 rsnum <- 'SNP1'
 
-
+# These are terms which are excluded from matching 
 example_matching_terms <- c('flipped',rsnum, 'raw', 'age', 'CV_outcome',
                           'valid_Ischemic_Heart_Disease', 'Ezetimibe', 'valid_T2D', 
                           'Hemorrhagic_Stroke_first_diag_date_before_Ischemic_Heart_Disease',
@@ -170,7 +178,9 @@ example_matching_terms <- c('flipped',rsnum, 'raw', 'age', 'CV_outcome',
                           'Centrally_acting_antihypertensive',
                           'Vasodilator_antihypertensive_drugs')
 
-
+# If this will format the dataframe to have the required variables for matching, including 'raw' (which includes 0,1,2 dosages), 
+# 'flipped' which switches the dosages for treatment and control so that matching can be performed successfully 
+# rsnum which groups dosages or 1 and 2 together as treatment and 0's as control 
 target_df <- example_dosage %>%
   select(IID, eval(rsnum)) %>%
   mutate(raw = get(rsnum)) %>%
@@ -178,28 +188,40 @@ target_df <- example_dosage %>%
   mutate({{rsnum}} := as.numeric( get(rsnum) > 0)) %>%
   mutate(flipped = abs(get(rsnum) - 1))
 
+# Define pheno 1
 pheno1 <- 'Afib'
 
+# Load the file with binary variables which define whether other diseases have been diagnosed before the disease of interest 
 before_Afib <- fread('example_before.txt') %>%
   select(-contains(c('Afib_first', 'CAD', 'ARVC', 'Hemorrhagic', 'MI_first')))
 
+# Append 'before' file to the master phenotype dataframe 
 master_pheno <- raw_master_pheno %>%
   left_join(get(paste0('before_', eval(pheno1))))
 
+# Filter for patients with disease of interest, and also filter out individuals with outcome date before or on the day of diagnosis
 pheno_filtered <- master_pheno %>%
   left_join(target_df) %>%
   filter(get(eval(paste0('valid_', pheno1))) == 1) %>%
   filter(get(eval(paste0( pheno1, '_years_to_outcome'))) > 0) 
 
+# Grab the age of diagnosis for matching and adjustments 
 age_pheno_diag <- pheno_filtered %>%
   select(IID, (eval(paste0('age_', pheno1, '_diag'))))
 
+# Matching function 
+# subset_df needs the dataframe with the participants and columns for input
+# list of conditions includes other columns which you may want to add 
+# set phenotype to NA generally, if not it'll grab columns automatically for phenotype of interest 
+# SNP variable takes the genotype variable in binary format as the matching variable (treatment vs controls)
+# omit_cols takes a vector of columns names to omit 
 matched_pheno_filtered <- matchit_all(subset_df = pheno_filtered,
                                       list_of_conditions = list(target_df, age_pheno_diag), 
                                       phenotype = NA,
                                       SNP = rsnum, 
                                       omit_cols = c(example_matching_terms))
 
+# Regrab years to outcome in order to reattach to dataframe and use in survival 
 years_to_outcome <- pheno_filtered %>%
   select(IID, eval(paste0( pheno1, '_years_to_outcome')))
 
@@ -207,13 +229,25 @@ years_to_outcome <- pheno_filtered %>%
 matched_with_diag <- matched_pheno_filtered %>%
   left_join(years_to_outcome)
 
-#### + Unmatched 
+#### + Unmatched Survival Analysis
 
-plotsurv('raw', gn, pheno_filtered, eval(pheno1), 'CV_outcome', 10, 0.0, adj=TRUE)
+# Plotting function for Cox Proportional Hazards
+# cut_time represents max time to outcome, patients with times to outcome greater than this number will be coded as controls
+# Ylim represents the floor of the yaxis 
+# Adj=True would add adjustments to the formula, defaulting as age and sex 
+plotsurv(rsnum = 'raw', 
+         gene_name = gn, 
+         pheno_df = pheno_filtered, 
+         phenotype = eval(pheno1), 
+         endpoint = 'CV_outcome', 
+         cut_time = 10, 
+         ylim = 0.0, adj=TRUE)
 
+# Fit for Kaplan Meier Plotting, change the variable name in the get() function to plot grouped or ungrouped genotypes
 fit <- survfit(Surv(years_to_outcome_20, outcome_20)~get('raw'), data=look)
 #summary(fit)
 
+#Plotting function for Kaplan Meier 
 unmatched <- ggsurvplot(fit,
            pval = F, 
            pval.coord = c(0, .55),
