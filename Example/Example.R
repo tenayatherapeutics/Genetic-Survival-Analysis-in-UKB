@@ -1,6 +1,6 @@
 .libPaths('/home/lzhang@TENAYA.local/my_bioinfo/rpackages')
 
-setwd('~/ukbiobank/Paper_Scripts/datafiles/Example/')
+setwd('./Example/')
 library(tidyverse)
 library(data.table)
 library(survminer)
@@ -12,7 +12,7 @@ library(cobalt)
 #### Load "master pheno" file ----
 
 set.seed(1)
-raw_master_pheno <- fread('example_pheno_with_AF_rehospitalization') 
+raw_master_pheno <- fread('example_pheno_with_AF_rehospitalization.txt') 
 
 plotsurv <- function(rsnum, gene_name, pheno_df, phenotype, endpoint, cut_time, ylim, adj=FALSE) {
   
@@ -209,7 +209,7 @@ matched_with_diag <- matched_pheno_filtered %>%
 
 #### + Unmatched 
 
-plotsurv('raw', gn, pheno_filtered, eval(pheno1), 'CV_outcome', 25, 0.0, adj=TRUE)
+plotsurv('raw', gn, pheno_filtered, eval(pheno1), 'CV_outcome', 10, 0.0, adj=TRUE)
 
 fit <- survfit(Surv(years_to_outcome_20, outcome_20)~get('raw'), data=look)
 #summary(fit)
@@ -230,7 +230,7 @@ unmatched <- ggsurvplot(fit,
            legend='none',
            #legend.labs = c('GG', 'GT/TT'),
            legend.labs = c('XX', 'XY', 'YY'),
-           ylim=c(0.6,1))
+           ylim=c(0.2,1))
 
 unmatched 
 
@@ -256,145 +256,22 @@ plotty <- ggsurvplot(fit,
            legend.title=paste(rsnum, 'alleles'),
            legend='none',
            #legend.labs = c('GG', 'GT/TT'),
-           legend.labs = c('GG', 'GA/AA'), #This is for rs562556
+           legend.labs = c('XX', 'XY', 'YY'), #This is for rs562556
            ylim=c(0.6,1))
 
 plotty 
 
-tiff('/home/lzhang@TENAYA.local/ukbiobank/Paper_Figures/PCSK9_rs562556_IHD_CV_Outcome_Matched_WB.tiff', width = 7, height = 6, units = 'in', res = 320)  #width=7, height=6)
-print(plotty)
-dev.off()
+#### Example file changes ---- 
 
-### Sensitivity analysis ----
+new_pheno <- raw_master_pheno %>%
+  #mutate(valid_Afib = 1, valid_Afib_after_30_days = 1)
+  mutate(Afib_years_to_outcome = runif(30, 0.1, 10))
 
-PCSK9_dosage <- fread('../dosage/PCSK9_rs11591147.txt') %>%
-  select(-FID) %>%
-  mutate_if(is.numeric, round)
+fwrite(new_pheno, file = 'example_pheno_with_AF_rehospitalization.txt', quote=F, na=NA)
 
-PCSK9_dosage <- fread('../dosage/PCSK9_rs562556.txt') %>%
-  select(-FID) %>%
-  mutate_if(is.numeric, round)
+example_dosage$SNP1 <- sample(c(rep(0, 16), sample(c(1,2), 14, replace=T)))
 
-
-gn <- 'PCSK9'
-rsnum <- 'rs11591147'
-rsnum <- 'rs562556'
-
-PCSK9_matching_terms <- c('flipped',rsnum, 'raw', 'age', 'CV_outcome',
-                          'valid_Ischemic_Heart_Disease', 'Ezetimibe', 'valid_T2D', 
-                          'Hemorrhagic_Stroke_first_diag_date_before_Ischemic_Heart_Disease',
-                          'Ischemic_Stroke_first_diag_date_before_Ischemic_Heart_Disease',
-                          'Diabetic', 'LDL_1', 
-                          'Centrally_acting_antihypertensive',
-                          'Vasodilator_antihypertensive_drugs')
-
-
-target_df <- PCSK9_dosage %>%
-  select(IID, eval(rsnum)) %>%
-  mutate(raw = get(rsnum)) %>%
-  mutate_if(is.numeric, round) %>%
-  mutate({{rsnum}} := as.numeric( get(rsnum) > 0)) %>%
-  mutate(flipped = abs(get(rsnum) - 1))
-
-pheno1 <- 'Ischemic_Heart_Disease'
-
-before_Ischemic_Heart_Disease <- fread('before_IHD.txt') %>%
-  select(-contains(c('Ischemic_Heart_Disease_first', 'CAD', 'ARVC', 'Hemorrhagic', 'MI_first')))
-
-master_pheno <- raw_master_pheno %>%
-  left_join(get(paste0('before_', eval(pheno1))))
-
-pheno_filtered <- master_pheno %>%
-  filter(ethnic_group == 1) %>%
-  #filter(kinship_to_other_participants == 0) %>%
-  filter(Ezetimibe ==0 & `Centrally acting antihypertensive` ==0 & `Vasodilator antihypertensive drugs`==0 ) %>%
-  left_join(target_df) %>%
-  filter(get(eval(paste0('valid_', pheno1))) == 1) %>%
-  filter(get(eval(paste0( pheno1, '_years_to_outcome'))) > 0) 
-
-pheno_filtered <- pheno_filtered %>%
-  sample_n(32142)
-
-age_pheno_diag <- pheno_filtered %>%
-  select(IID, (eval(paste0('age_', pheno1, '_diag'))))
-
-matched_pheno_filtered <- matchit_all(subset_df = pheno_filtered,
-                                      list_of_conditions = list(target_df, age_pheno_diag), 
-                                      phenotype = NA,
-                                      SNP = rsnum, 
-                                      omit_cols = c(PCSK9_matching_terms))
-
-years_to_outcome <- pheno_filtered %>%
-  select(IID, eval(paste0( pheno1, '_years_to_outcome')))
-
-
-matched_with_diag <- matched_pheno_filtered %>%
-  left_join(years_to_outcome)
-
-#matched_with_diag_1 <- matched_with_diag %>%
-#  filter(get(rsnum) == 1) %>%
-#  sample_n(864)
-
-#matched_with_diag_0 <- matched_with_diag %>%
-#  filter(get(rsnum) == 0) %>%
-#  sample_n(864)
-
-#matched_with_diag <- smartbind(matched_with_diag_0, matched_with_diag_1)
-
-#### + Unmatched 
-
-plotsurv('raw', gn, pheno_filtered, eval(pheno1), 'CV_outcome', 25, 0.0, adj=TRUE)
-
-fit <- survfit(Surv(years_to_outcome_20, outcome_20)~get(rsnum), data=look)
-#summary(fit)
-
-unmatched <- ggsurvplot(fit,
-                        pval = F, 
-                        pval.coord = c(0, .55),
-                        conf.int = FALSE,
-                        risk.table = TRUE,
-                        # fontsize = 8,# Add risk table
-                        risk.table.col = "strata", # Change risk table color by groups
-                        linetype = "strata", # Change line type by groups
-                        #surv.median.line = "hv", # Specify median survival
-                        ggtheme = theme_classic2(), # Change ggplot2 theme
-                        title=paste(''),
-                        xlab = 'Time to Outcome',
-                        legend.title=paste(rsnum, 'Genotypes'),
-                        legend='none',
-                        #legend.labs = c('GG', 'GT/TT'),
-                        legend.labs = c('GG', 'GA/AA'),
-                        ylim=c(0.6,1))
-
-unmatched 
-
-#### + Matched 
-
-plotsurv(rsnum, gn, matched_with_diag, eval(pheno1), 'CV_outcome', 25, 0.0, adj=FALSE)
-
-fit <- survfit(Surv(years_to_outcome_20, outcome_20)~get(rsnum), data=look)
-#summary(fit)
-
-plotty <- ggsurvplot(fit,
-                     pval = F, 
-                     pval.coord = c(0, .7),
-                     conf.int = FALSE,
-                     risk.table = TRUE,
-                     #fontsize = 8,# Add risk table
-                     risk.table.col = "strata", # Change risk table color by groups
-                     linetype = "strata", # Change line type by groups
-                     #surv.median.line = "hv", # Specify median survival
-                     ggtheme = theme_classic2(), # Change ggplot2 theme
-                     title='',
-                     xlab = 'Time',
-                     legend.title=paste(rsnum, 'alleles'),
-                     legend='none',
-                     #legend.labs = c('GG', 'GT/TT'),
-                     legend.labs = c('GG', 'GA/AA'), #This is for rs562556
-                     ylim=c(0.6,1))
-
-plotty 
-
+fwrite(example_dosage, file='example_dosage.txt', quote=F, na=NA)
 
 ### Power Calc 
 
