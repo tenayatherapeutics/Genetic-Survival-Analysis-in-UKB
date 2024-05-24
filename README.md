@@ -1,4 +1,4 @@
-# Genetic-Survival-Analysis-in-UKB
+# Genetic Survival Analysis in UKB
 
 This repository contains an scripts for performing detailed survival analysis using Cox proportional hazards and Kaplan-Meier plots. The script includes functions for loading and preparing phenotypic data, matching cases and controls, and generating survival plots. Key functionalities include:
 
@@ -9,6 +9,9 @@ This repository contains an scripts for performing detailed survival analysis us
 
 ## Table of Contents
 
+<details>
+<summary>Click to expand</summary>
+  
 - [Dependencies](#dependencies)
 - [Step 1: Data Extraction and Preparation from DNANexus](#step-1-preparing-and-extracting-data-from-dnanexus)
   - [Extracting Fields for Basic Phenotype Preparation](#extracting-fields-for-basic-phenotype-preparation)
@@ -22,6 +25,8 @@ This repository contains an scripts for performing detailed survival analysis us
 - [Step 4: Running Survival Analysis](#step-4-running-survival-analysis)
   - [Required Files and Libraries](#required-files-and-libraries-1)
   - [Main Functions](#main-functions-1)
+
+</details>
 
 ## Dependencies
 Dependencies include:
