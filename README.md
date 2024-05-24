@@ -9,25 +9,23 @@ This repository contains an scripts for performing detailed survival analysis us
 
 ## Table of Contents
 
-<details>
-<summary>Click to expand</summary>
-
 - [Dependencies](#dependencies)
 - [Step 1: Data Extraction and Preparation from DNANexus](#step-1-preparing-and-extracting-data-from-dnanexus)
   - [Extracting Fields for Basic Phenotype Preparation](#extracting-fields-for-basic-phenotype-preparation)
   - [Extracting SNP Dosages](#extracting-snp-dosages)
+  - [Expected Outputs](#expected-outputs-1)
 - [Step 2: Obtaining Patient Medication Use Data](#step-2-obtaining-patient-medication-use-data)
   - [Grouping UKB Medicine Codes](#grouping-ukb-medicine-codes)
   - [Creating the Binary Medication Variables](#creating-the-binary-medication-variables)
+  - [Expected Outputs](#expected-outputs-2)
 - [Step 3: Formatting Hospital Inpatient Data](#step-3-formatting-hospital-inpatient-data)
   - [Required Files and Libraries](#required-files-and-libraries)
   - [Main Functions](#main-functions)
-  - [Expected Outputs](#expected-outputs)
+  - [Expected Outputs](#expected-outputs-3)
 - [Step 4: Running Survival Analysis](#step-4-running-survival-analysis)
   - [Required Files and Libraries](#required-files-and-libraries-1)
   - [Main Functions](#main-functions-1)
-
-</details>
+  - [Expected Outputs](#expected-outputs-4)
 
 ## Dependencies
 Dependencies include:
@@ -243,4 +241,5 @@ plotsurv(rsnum = 'raw',
          adj=TRUE) # Adj=True would add adjustments to the formula, defaulting as age and sex
 ```
 ### Expected Outputs
-- Survival plots and model summaries for both matched and unmatched populations of patients 
+
+- Survival plots and model summaries for unmatched and matched data
