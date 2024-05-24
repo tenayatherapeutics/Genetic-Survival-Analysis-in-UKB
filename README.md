@@ -71,7 +71,7 @@ field_names
 Sometimes it would be faster to copy the output from ```field_names``` and manually remove any instances which are not needed for the analysis, especially if only measurements from the initial enrollment into UKB are being considered. This would greatly increase runtime for the current implementation.  
 
 ### **Extracting SNP Dosages**:
-Upload the notebook [```Dosage_Extraction.ipynb```](provide_link) into the project folder of choice on DNANexus, open a JupyterLab environment, and execute the code provided. 
+Upload the notebook [```Dosage_Extraction.ipynb```](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Survival_UKB_scripts/Dosage_Extraction.ipynb) into the project folder of choice on DNANexus, open a JupyterLab environment, and execute the code provided. 
 
 ### Expected Outputs 
 - **dosage.txt**: Dosage file consisting of IIDs and RSNUMs
