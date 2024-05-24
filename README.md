@@ -82,3 +82,14 @@ import re
 med_groups = 'MedicationGroups.txt'
 codings = 'coding4.tsv'
 ```
+### **Creating the Binary Variables** 
+
+The R script [Append_Med_to_Pheno](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Survival_UKB_scripts/Append_Med_to_Pheno.R) will take the outputs from previous steps and create the binary variables needed for downstream analysis. The required files can be seen here: 
+```
+#### Basic phenofile and requisite data preparations ----
+
+MedGroup <- fread('MedicationGroups.txt')
+codings <- fread('coding4.tsv')
+result <- fread('merged_med_groups_stringent_anticoag.txt') #Result from running the medications.py script 
+base_pheno <- fread('example_survival_base_pheno.txt')
+```
