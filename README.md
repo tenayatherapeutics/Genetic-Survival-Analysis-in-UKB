@@ -301,6 +301,13 @@ plotsurv(rsnum = 'raw',
 ___
 ## Example 
 
+As previously mentioned, an example runthrough of the main survival pipelines (excluding data filtering and creation) can be found in the [`Example`](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/tree/main/Example) folder. This folder also contains the requisite files needed for running survival analysis, scrambled data files mimicking the files created if steps 1-3 are followed successfully. These include:
+- ['example_CV_outcome.txt'](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Example/example_CV_outcome): Example file containing the dates for death, study end, and cardiovascular operations.
+- ['example_before.txt'](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Example/example_before.txt): Example file containing binary variables for comorbidity disease status before diagnosis of Atrial Fibrillation (AF). 
+- ['example_dosage.txt'](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Example/example_dosage.txt): Example dosage file.
+- ['example_pheno_with_AF_rehospitalization.txt'](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Example/example_pheno_with_AF_rehospitalization.txt): Example file containing baseline demographics information, dates for first disease diagnosis, and dates for first Atrial Fibrillation rehospitalizations (after 30 days from first diagnosis).
+
+
 ## Contributing
 
 ## License
