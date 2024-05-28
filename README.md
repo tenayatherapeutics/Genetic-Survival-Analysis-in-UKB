@@ -298,3 +298,12 @@ plotsurv(rsnum = 'raw',
 ### Expected Outputs
 
 - Survival plots and model summaries for unmatched and matched data
+___
+## Example 
+
+## Contributing
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/LICENSE) file for details.
+
