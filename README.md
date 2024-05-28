@@ -30,13 +30,26 @@ This repository contains an scripts for performing detailed survival analysis us
 
 ## Dependencies
 Dependencies include:
-- `tidyverse`
-- `data.table`
-- `survminer`
-- `survival`
-- `MatchIt`
-- `expss`
-- `cobalt`	
+- [`tidyverse`](https://cran.r-project.org/package=tidyverse)
+- [`data.table`](https://cran.r-project.org/package=data.table)
+- [`survminer`](https://cran.r-project.org/package=survminer)
+- [`survival`](https://cran.r-project.org/package=survival)
+- [`MatchIt`](https://cran.r-project.org/package=MatchIt)
+- [`expss`](https://cran.r-project.org/package=expss)
+- [`cobalt`](https://cran.r-project.org/package=cobalt)
+
+To Install: 
+```R
+# List of required packages
+packages <- c("tidyverse", "data.table", "survminer", "survival", "MatchIt", "expss", "cobalt")
+
+# Check if packages are installed and install missing ones
+for (pkg in packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+}
+```
 
 ## Overview
 
