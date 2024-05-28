@@ -67,10 +67,10 @@ flowchart TD;
     B --> C;
     C --> D;
 
-    A -.->	 E("example_survival_base_pheno.txt<br/>dosage.txt");
-    B -.->	 F("example_pheno_with_meds.txt<br/>merged_med_groups_stringent_anticoag.txt");
-    C -.->	 G("pheno_with_diagnosis_dates.txt<br/>thirty_day_rehos.txt<br/>before_disease.txt<br/>cv_outcome_raw.txt");
-    D -.->	 H("survival_plots.png<br/>coxph_model_summary.txt");
+    A -.-	 E("example_survival_base_pheno.txt<br/>dosage.txt");
+    B -.-	 F("example_pheno_with_meds.txt<br/>merged_med_groups_stringent_anticoag.txt");
+    C -.-	 G("pheno_with_diagnosis_dates.txt<br/>thirty_day_rehos.txt<br/>before_disease.txt<br/>cv_outcome_raw.txt");
+    D -.-	 H("survival_plots.png<br/>coxph_model_summary.txt");
 
 
 ```
