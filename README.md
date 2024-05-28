@@ -59,7 +59,7 @@ Steps 1-3 will focus on extracting and processing data from UK Biobank to retrie
 
 flowchart TD;
     A["<b>Step 1: Data Extraction and Preparation from DNANexus</b><br/>Surv_paper_Pheno.ipynb<br/>Dosage_Extraction_UKB.ipynb"];
-    B["<b>Step 2: Obtaining Patient Medication Use Data</b><br/>Append_Med_to_Pheno.R"];
+    B["<b>Step 2: Obtaining Patient Medication Use Data</b><br/>Append_Med_to_Pheno.R<br/>medication_grouping.py"];
     C["<b>Step 3: Formatting Hospital Inpatient Data</b><br/>retrieve_diag_dates_UKB.R"];
     D["<b>Step 4: Running Survival Analysis</b><br/>Example.R<br/>PCSK9.R<br/>ACE.R<br/>ADRB1.R"];
 
@@ -68,7 +68,7 @@ flowchart TD;
     C --> D;
 
     A -.->	 E("example_survival_base_pheno.txt<br/>dosage.txt");
-    B -.->	 F("example_pheno_with_meds.txt");
+    B -.->	 F("example_pheno_with_meds.txt<br/>merged_med_groups_stringent_anticoag.txt");
     C -.->	 G("pheno_with_diagnosis_dates.txt<br/>thirty_day_rehos.txt<br/>before_disease.txt<br/>cv_outcome_raw.txt");
     D -.->	 H("survival_plots.png<br/>coxph_model_summary.txt");
 
