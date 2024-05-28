@@ -71,10 +71,51 @@ field_names
 Sometimes it would be faster to copy the output from ```field_names``` and manually remove any instances which are not needed for the analysis, especially if only measurements from the initial enrollment into UKB are being considered. This would greatly increase runtime for the current implementation.  
 
 ### **Extracting SNP Dosages**:
-Upload the notebook [```Dosage_Extraction.ipynb```](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Survival_UKB_scripts/Dosage_Extraction.ipynb) into the project folder of choice on DNANexus, open a JupyterLab environment, and execute the code provided. 
+
+Upload the notebook [```Dosage_Extraction_UKB.ipynb```](https://github.com/tenayatherapeutics/Genetic-Survival-Analysis-in-UKB/blob/main/Survival_UKB_scripts/Dosage_Extraction_UKB.ipynb) into the project folder of choice on DNANexus, open a JupyterLab environment, and execute the code provided. One or more paths to the correct dosage files and corresponding sample files on UKB must be provided for this script to work, as seen here in this example: 
+
+```python3
+# Get TOPMED imputed dosages (per chromosome)
+def getImputedPath(chrom):
+    imputed_path = '/mnt/project/Bulk/Imputation/Imputation from genotype (TOPmed)/ukb21007_c' + chrom[3:] + '_b0_v1.bgen'
+    return imputed_path
+
+# Return Sample Dataframe for Imputed dosages
+def getSampleDF(chrom):
+    sample_path = '/mnt/project/Bulk/Imputation/Imputation from genotype (TOPmed)/ukb21007_c' + chrom[3:] + '_b0_v1.sample'
+    sample_df = pd.read_csv(sample_path, sep=' ')
+    sample_df = sample_df.drop(index=0)
+    sample_df = sample_df.drop(['missing', 'sex'], axis=1)
+    sample_df = sample_df.reset_index(drop=True)
+    sample_df = sample_df.rename(columns={"ID_1": "FID", "ID_2": "IID"}, errors="raise")
+    return sample_df
+
+```
+To use the main dosage extraction function, simply pass a list of SNPs formatted in the same way as the example provided below. **The format for denoting chromosome number in WES data on UKB is "chr10" while in TOPMed imputed data it is simply "10".**
+```python3
+
+# ADRB1 Example
+# chr:pos:ref:alt:rsnum
+
+# WES Format
+ADRB1_snps = ['chr10:114044277:A:G:rs1801252', 
+             'chr10:114045297:G:C:rs1801253']
+# TOPMed Imputed Format
+ADRB1_snps = ['10:114044277:A:G:rs1801252', 
+             '10:114045297:G:C:rs1801253']
+```
+Once dosages for the SNPs of interest are successfully obtained, write the resulting dataframe to a `csv` or `txt`. This can be done in DNANexus like so:
+
+```python3
+file_path = 'dosage.txt'
+multipleSNPdosages.to_csv(file_path, sep='\t', index=False)
+
+%%bash 
+dx upload --destination ./path/to/working/dir/ *.txt
+```
 
 ### Expected Outputs 
-- **dosage.txt**: Dosage file consisting of IIDs and RSNUMs
+- **dosage.txt**: Dosage file consisting of IIDs and RSNUMs.
 - **example_survival_base_pheno.txt**: Basic phenotype file with measurements available in the main dataset, columns required to extract medication use data, and covariates such as age, sex, and principle components. 
 ___
 
