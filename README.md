@@ -55,6 +55,19 @@ for (pkg in packages) {
 
 Steps 1-3 will focus on extracting and processing data from UK Biobank to retrieve hospital admission data, biomarker measurements, gene dosages, and much more. This section will be broken into two parts, one focusing on extracting data from DNANexus (Step 1-2) and one from Hospital Inpatient Data (Step 3) not included in the "main" file provided by UKB. More information on this hospital inpatient data (HES-in) could be found [here](https://biobank.ndph.ox.ac.uk/ukb/ukb/docs/HospitalEpisodeStatistics.pdf). Step 4 describes how to use the files created in Steps 1-3 to perform survival analysis. 
 
+```mermaid
+
+graph TD;
+    A["<b>Step 1: Data Extraction and Preparation from DNANexus</b><br/>Surv_paper_Pheno.ipynb<br/>Dosage_Extraction_UKB.ipynb"];
+    B["<b>Step 2: Obtaining Patient Medication Use Data</b><br/>Append_Med_to_Pheno.R"];
+    C["<b>Step 3: Formatting Hospital Inpatient Data</b><br/>retrieve_diag_dates_UKB.R"];
+    D["<b>Step 4: Running Survival Analysis</b><br/>Example.R<br/>PCSK9.R<br/>ACE.R<br/>ADRB1.R"];
+
+    A --> B;
+    B --> C;
+    C --> D;
+```
+
 ## **Step 1: Preparing and Extracting Data from DNANexus** 
 
 The UK Biobank Research Analysis Platform is required in order to extract the fields needed to build the basic phenotype file needed to run the analysis, or replicate the results presented in our paper. If repurposing this repository for other endpoints and diseases of interest, the fields list could be ammended to grab whichever ones provide the relevant traits. This step of data preparation can also be done on a local copy of the main file, though this section would only work with the UKB DNANexus platform.
