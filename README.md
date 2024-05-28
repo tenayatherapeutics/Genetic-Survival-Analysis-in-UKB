@@ -57,7 +57,7 @@ Steps 1-3 will focus on extracting and processing data from UK Biobank to retrie
 
 ```mermaid
 
-graph TD;
+flowchart TD;
     A["<b>Step 1: Data Extraction and Preparation from DNANexus</b><br/>Surv_paper_Pheno.ipynb<br/>Dosage_Extraction_UKB.ipynb"];
     B["<b>Step 2: Obtaining Patient Medication Use Data</b><br/>Append_Med_to_Pheno.R"];
     C["<b>Step 3: Formatting Hospital Inpatient Data</b><br/>retrieve_diag_dates_UKB.R"];
@@ -66,6 +66,13 @@ graph TD;
     A --> B;
     B --> C;
     C --> D;
+
+    A -.->	 E("example_survival_base_pheno.txt<br/>dosage.txt");
+    B -.->	 F("example_pheno_with_meds.txt");
+    C -.->	 G("pheno_with_diagnosis_dates.txt<br/>thirty_day_rehos.txt<br/>before_disease.txt<br/>cv_outcome_raw.txt");
+    D -.->	 H("survival_plots.png<br/>coxph_model_summary.txt");
+
+
 ```
 
 ## **Step 1: Preparing and Extracting Data from DNANexus** 
