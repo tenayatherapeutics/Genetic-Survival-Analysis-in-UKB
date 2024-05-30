@@ -8,7 +8,7 @@ This repository contains an scripts for performing detailed survival analysis us
 - **Power Calculation:** Includes functions to perform power calculations for survival analysis.
 
 ## Graphical Abstract
-[Graphical Abstract](./Graphical_Abstract.png)
+![Graphical Abstract](./Graphical_Abstract.png?raw=true)
 
 ## Table of Contents
 
