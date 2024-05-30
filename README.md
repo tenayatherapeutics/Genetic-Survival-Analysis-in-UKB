@@ -7,6 +7,9 @@ This repository contains an scripts for performing detailed survival analysis us
 - **Matching Function:** Implements nearest neighbor matching to balance treatment and control groups based on various covariates.
 - **Power Calculation:** Includes functions to perform power calculations for survival analysis.
 
+## Graphical Abstract
+[Graphical Abstract](./Graphical_Abstract.png)
+
 ## Table of Contents
 
 <details>
