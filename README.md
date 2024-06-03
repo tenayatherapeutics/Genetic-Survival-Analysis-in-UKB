@@ -6,7 +6,7 @@ This repository contains an scripts for performing detailed survival analysis us
 - **Survival Plotting:** Generates survival plots for time from diagnosis to cardiovascular outcomes using both Cox proportional hazards and Kaplan-Meier methods.
 - **Matching Function:** Implements nearest neighbor matching to balance treatment and control groups based on various covariates.
 - **Power Calculation:** Includes functions to perform power calculations for survival analysis.
-- 
+
 ## Table of Contents
 
 <details>
